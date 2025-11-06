@@ -11,7 +11,7 @@ In the tenant of a company (let's call it "ACME"), there is a Function App that 
 - Add the managed identity as the identity of the App Function. As far as I tried, I could not do this with a system-assigned identity.
 - Add a federated credential in the app registration that points to the Managed Identity.
 
-## What is necessary in each customers tenant:
+## What is necessary in each customers' tenant:
 - Service principal with the id of ACME's App registration ( This can be done using azure cli `az ad sp create --id <client-id>` , azure power shell or http request)
 - Include the service principal as an app user of the Dataverse (It won't show up in the list when you try to add it; type the clientId to see it.)
 - Grant necessary roles to the app user.
