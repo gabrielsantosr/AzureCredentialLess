@@ -3,9 +3,9 @@ Explorative project to demonstrate the possibility to query data stored in Micro
 Same thing can be applied to ERPs.
 
 ## Scenario.
-In the tenant of a company (let's call it "ACME"), there is a Function App that needs to interact with CRMs of their customers.
+In the tenant of a company (let's call it "PROVIDER"), there is a Function App that needs to interact with CRMs of their customers.
 
-## What is necessary in ACME's tenant:
+## What is necessary in PROVIDER's tenant:
 - Function app
 - Managed Identity
 - Multi-tenant App registration (clientId)
@@ -13,13 +13,13 @@ In the tenant of a company (let's call it "ACME"), there is a Function App that 
 - Add a federated credential in the app registration that points to the Managed Identity.
 
 ## What is necessary in each customer's tenant:
-- Service principal with the id of ACME's App registration ( This can be done using azure cli `az ad sp create --id <client-id>` , azure power shell or http request)
+- Service principal with the id of PROVIDER's App registration ( This can be done using azure cli `az ad sp create --id <client-id>` , azure power shell or http request)
 - Include the service principal as an app user of the Dataverse (It won't show up in the list when you try to add it; type the clientId to see it.)
 - Grant necessary roles to the app user within Dataverse
 
-By including a local Service Principal of the ACME's App Registration, customers can grant ACME whichever roles they need.
+By including a local Service Principal of PROVIDER's App Registration, customers can grant PROVIDER whichever roles they need.
 
-ACME, from it's side, manages however they wan't to authenticate.
+PROVIDER, from it's side, manages however they wan't to authenticate.
 
 You could still use certificates or secrets, if you are used to it. The multi-tenancy is already solving the problem of having to handle customers secrets, because the credentials are managed from your App registration, from your tenant.
 
