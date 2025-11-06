@@ -21,7 +21,7 @@ By including a local Service Principal of the ACME's App Registration, customers
 
 ACME, from it's side, manages however they wan't to authenticate.
 
-You could still use certificates or secrets, if you are used to it. The multi-tenancy is already solving the problem of having to handle customers secrets, because the credentials are managed from your app, from your tenant.
+You could still use certificates or secrets, if you are used to it. The multi-tenancy is already solving the problem of having to handle customers secrets, because the credentials are managed from your App registration, from your tenant.
 
 Adding the federated credential eliminates the need of credentials altogether.
 
