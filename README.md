@@ -3,7 +3,7 @@ Explorative project to demonstrate the possibility to query data stored in Micro
 Same thing can be applied to ERPs.
 
 ## Scenario.
-In the tenant of a company (let's call it "PROVIDER"), there is a Function App that needs to interact with CRMs of their customers.
+In the tenant of a company (let's call it "PROVIDER"), there is a Function App that needs to interact with CRMs of its customers.
 
 ## What is necessary in PROVIDER's tenant:
 - Function app
