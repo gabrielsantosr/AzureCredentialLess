@@ -1,5 +1,5 @@
 # AzureCredentialLess
-Explorative project to demonstrate the possibility to query data from Microsoft Dynamics CRM from an Function App in another tenant without using passwords, nor secrets, nor certificates.
+Explorative project to demonstrate the possibility to query data stored Microsoft Dynamics CRM in a tenant from an Function App in another tenant without using passwords, nor secrets, nor certificates.
 
 ## Scenario.
 In the tenant of a company (let's call it "ACME"), there is a Function App that needs to interact with CRMs of their customers.
@@ -9,7 +9,7 @@ In the tenant of a company (let's call it "ACME"), there is a Function App that 
 - Managed Identity 
 - App registration (clientId)
 - Add the managed identity as the identity of the App Function. As far as I tried, I could not do this with a system-assigned identity.
-- Add a generated credential in the app registration that points to the Managed Identity.
+- Add a federated credential in the app registration that points to the Managed Identity.
 
 ## What is necessary in each customers Dataverse:
 - Service principal with the id of ACME's App registration ( This can be done using azure cli `az ad sp create --id <client-id>` , azure power shell or http request)
