@@ -7,9 +7,9 @@ In the tenant of a company (let's call it "ACME"), there is a Function App that 
 
 ## What is necessary in ACME's tenant:
 - Function app
-- Managed Identity 
+- Managed Identity
 - Multi-tenant App registration (clientId)
-- Add the managed identity as the identity of the App Function. As far as I tried, I could not do this with a system-assigned identity.
+- Add the managed identity as the identity of the App Function. As far as I tried, it only works with user-assigned identitiies, not with system-assigned ones).
 - Add a federated credential in the app registration that points to the Managed Identity.
 
 ## What is necessary in each customer's tenant:
