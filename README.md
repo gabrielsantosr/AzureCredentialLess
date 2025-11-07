@@ -7,10 +7,16 @@ In the tenant of a company (let's call it "PROVIDER"), there is a Function App t
 
 ## What is necessary in PROVIDER's tenant:
 - Function app
-- Managed Identity
+- Managed Identity (MI)
 - Multi-tenant App registration (clientId)
-- Add the managed identity as the identity of the App Function. As far as I tried, it only works with user-assigned identitiies, not with system-assigned ones.
-- Add a federated credential in the app registration that points to the Managed Identity.
+- Add a federated credential in the app registration for the MI.
+ 
+ #### _Comments:_
+ _I found it is not necessary to grant user_impersonation API permission_
+
+ _Regarding the managed Identity, it can be either the Function app's system-assigned or a user-assigned one, assigned to the Function App._
+
+ _Specific to this project: It needs added the environment variable (EV) **client_id**, and, if using a sistem-assigned MI, the EV **identity_client_id**._
 
 ## What is necessary in each customer's tenant:
 - Service principal with the id of PROVIDER's App registration ( This can be done using azure cli `az ad sp create --id <client-id>` , azure power shell or http request)

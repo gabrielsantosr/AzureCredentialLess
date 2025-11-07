@@ -21,7 +21,7 @@ public class Dataverse
     {
         try
         {
-            var table = req.Query["query"][0];
+            var query = req.Query["query"][0];
             var url = req.Query["url"][0];
             var tenant = req.Query["tenant-id"][0];
 
@@ -34,10 +34,9 @@ public class Dataverse
             headers.Authorization = new AuthenticationHeaderValue("Bearer", await Authorization.GetToken(url, tenant));
             headers.Add("OData-MaxVersion", "4.0");
             headers.Add("OData-Version", "4.0");
-            headers.Add("Prefer", "odata.include-annotations=*");
 
             // Web API call
-            var response = await client.GetAsync(url + "api/data/v9.2/" + table);
+            var response = await client.GetAsync(url + "api/data/v9.2/" + query);
             string content = await response.Content.ReadAsStringAsync();
             return new OkObjectResult(content) { StatusCode = (int)response.StatusCode };
         }
