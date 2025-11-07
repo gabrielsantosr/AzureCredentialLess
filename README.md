@@ -12,7 +12,7 @@ In the tenant of a company (let's call it "PROVIDER"), there is a Function App t
 - Add a federated credential in the app registration for the MI.
  
  #### _Comments:_
- _I found it is not necessary to grant user_impersonation API permission_
+ _I found it is not necessary to grant user_impersonation API permission to the App registration._
 
  _Regarding the managed Identity, it can be either the Function app's system-assigned or a user-assigned one, assigned to the Function App._
 
