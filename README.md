@@ -25,10 +25,10 @@ In the tenant of a company (let's call it "PROVIDER"), there is a Function App t
 
 By including a local Service Principal of PROVIDER's App Registration, customers can grant PROVIDER whichever roles they need.
 
-PROVIDER, from it's side, manages however they wan't to authenticate.
+PROVIDER, from their side, can manage authentication however they wan't to.
 
-You could still use certificates or secrets, if you are used to it. The multi-tenancy is already solving the problem of having to handle customers' secrets, because the credentials are managed from your App registration, from your tenant.
-
+You could still use certificates or secrets, if you are used to it. The multi-tenancy is already solving the problem of having to handle customers' secrets, because the credentials are managed from your App registration, from your tenant, and there is only one credential
+needed.
 Adding the federated credential eliminates the need of credentials altogether.
 
 ## References
