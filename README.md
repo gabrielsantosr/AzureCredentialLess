@@ -1,6 +1,7 @@
 # AzureCredentialLess
-Explorative project to demonstrate the possibility to query data stored in Microsoft Dynamics CRM in a tenant from an Function App in another tenant without using passwords, nor secrets, nor certificates.
-Same thing can be applied to ERPs.
+Explorative project to demonstrate the possibility to access resources in a different tenant without using passwords, nor secrets, nor certificates.
+In this project, from an Function App in my tenant, I am querying data stored in Microsoft Dynamics CRM environments in other tenants.
+Same can be done form a Logic App, a VM (any kind of resource you can bind to a managed identity), to any other resource in another tenant (say Key-Vault, ERP, Blob storage).
 
 ## Scenario.
 In the tenant of a company (let's call it "PROVIDER"), there is a Function App that needs to interact with CRMs of its customers.
