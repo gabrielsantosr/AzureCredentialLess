@@ -23,7 +23,7 @@ In the tenant of a company (let's call it "PROVIDER"), there is a Function App t
 - Include the service principal as an app user of the Dataverse (It won't show up in the list when you try to add it; type the clientId to see it.)
 - Grant necessary roles to the app user within Dataverse
 
-By including a local Service Principal of PROVIDER's App Registration, customers can grant PROVIDER whichever roles they need.
+By including a local Service Principal of PROVIDER's App Registration, customers can grant PROVIDER whichever roles they need in their CRM or ERP environments, or their Azure resources.
 
 PROVIDER, from their side, can manage authentication however they wan't to.
 
