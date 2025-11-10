@@ -12,8 +12,8 @@ namespace AzureCredentialLess.Classes
 
         private readonly DateTime CreatedOn = DateTime.UtcNow;
 
-        // these tokens expire an hour after they have been issued. Let's consider them expired 5 minutes before then, to play it safe.
-        internal bool IsExpired { get => CreatedOn.AddSeconds(ExpiresIn - 300) < DateTime.UtcNow; } 
+        // Let's consider it expired 2 minutes before the actual expiry moment, to play it safe.
+        internal bool IsExpired { get => CreatedOn.AddSeconds(ExpiresIn - 120) < DateTime.UtcNow; } 
 
     }
 }

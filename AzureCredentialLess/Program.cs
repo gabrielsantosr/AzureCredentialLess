@@ -1,3 +1,4 @@
+using AzureCredentialLess.Services;
 using Microsoft.Azure.Functions.Worker;
 using Microsoft.Azure.Functions.Worker.Builder;
 using Microsoft.Extensions.DependencyInjection;
@@ -8,6 +9,9 @@ var builder = FunctionsApplication.CreateBuilder(args);
 builder.ConfigureFunctionsWebApplication();
 
 builder.Services
+    .AddSingleton<IAzureAuthService,AzureAuthService>()
+    .AddSingleton<ICRMService,CRMService>()
+    .AddSingleton<IBCService,BCService>()
     .AddApplicationInsightsTelemetryWorkerService()
     .ConfigureFunctionsApplicationInsights();
 

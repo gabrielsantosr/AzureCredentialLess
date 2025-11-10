@@ -2,9 +2,9 @@
 using Azure.Identity;
 using AzureCredentialLess.Classes;
 
-namespace AzureCredentialLess.Helpers
+namespace AzureCredentialLess.Services
 {
-    internal class Authorization
+    public class AzureAuthService : IAzureAuthService
     {
 
         const string clientIdParamName = "client_id";
@@ -12,22 +12,22 @@ namespace AzureCredentialLess.Helpers
         /// <summary>
         /// Dictionary to cache the <i>Client-to-Resource</i> tokens
         /// </summary>
-        private static Dictionary<string, Token> resourcesTokens = new();
+        private Dictionary<string, Token> resourcesTokens = new();
 
         /// <summary>
         /// Managed Identity token issuer.
         /// It generates and caches the <i>ManagedIdentity-to-Client</i> tokens
         /// </summary>
-        private static ManagedIdentityCredential identityCredential;
+        private ManagedIdentityCredential identityCredential;
         /// <summary>
         ///  Context to get the <i>ManagedIdentity-to-Client</i> tokens
         /// </summary>
-        private static TokenRequestContext identityToClientContext;
+        private TokenRequestContext identityToClientContext;
         /// <summary>
         ///  Dictionary containing the parameters needed for the <i>Client-to-Resource</i> token POST request that are always the same.
         /// </summary>
         private static Dictionary<string, string> basicTokenRequestParams;
-        static Authorization()
+        public AzureAuthService()
         {
             resourcesTokens = new();
             InitManagedIdentityCredential();
@@ -35,20 +35,20 @@ namespace AzureCredentialLess.Helpers
             identityToClientContext = new TokenRequestContext(new[] { $"api://AzureADTokenExchange/.default" });
         }
 
-        internal static async Task<string> GetToken(string crmUrl, string crmTenant)
+        public async Task<string> GetCredentialLessToken(string tenantId, string resource)
         {
 
-            if (!resourcesTokens.ContainsKey(crmUrl) || resourcesTokens[crmUrl].IsExpired)
+            if (!resourcesTokens.ContainsKey(resource) || resourcesTokens[resource].IsExpired)
             {
                 using (HttpClient client = new HttpClient())
                 {
-                    string url = $"https://login.microsoftonline.com/{crmTenant}/oauth2/v2.0/token";
-                    var RequestContent = new FormUrlEncodedContent(await GetTokenRequestParams(crmUrl));
-                    var response = await client.PostAsync($"https://login.microsoftonline.com/{crmTenant}/oauth2/v2.0/token", RequestContent);
-                    resourcesTokens[crmUrl] = System.Text.Json.JsonSerializer.Deserialize<Token>(await response.Content.ReadAsStringAsync());
+                    string url = $"https://login.microsoftonline.com/{tenantId}/oauth2/v2.0/token";
+                    var RequestContent = new FormUrlEncodedContent(await GetTokenRequestParams(resource));
+                    var response = await client.PostAsync($"https://login.microsoftonline.com/{tenantId}/oauth2/v2.0/token", RequestContent);
+                    resourcesTokens[resource] = System.Text.Json.JsonSerializer.Deserialize<Token>(await response.Content.ReadAsStringAsync());
                 }
             }
-            return resourcesTokens[crmUrl].AccessToken;
+            return resourcesTokens[resource].AccessToken;
         }
 
         /// <summary>
@@ -58,7 +58,7 @@ namespace AzureCredentialLess.Helpers
         /// 
         /// The app registration must have a federated credential for the identity. 
         /// </summary>
-        private static void InitManagedIdentityCredential()
+        private void InitManagedIdentityCredential()
 
         {
 
@@ -79,7 +79,7 @@ namespace AzureCredentialLess.Helpers
         /// <param name="resource"></param>
         /// <returns></returns>
         /// <exception cref="Exception"></exception>
-        private static async Task<Dictionary<string, string>> GetTokenRequestParams(string resource)
+        private async Task<Dictionary<string, string>> GetTokenRequestParams(string resource)
         {
             if (string.IsNullOrWhiteSpace(basicTokenRequestParams[clientIdParamName]))
             {
@@ -107,9 +107,5 @@ namespace AzureCredentialLess.Helpers
                 ["grant_type"] = "client_credentials"
             };
         }
-
-
     }
-
-
 }
