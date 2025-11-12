@@ -12,11 +12,13 @@ public class Service
     private readonly ILogger<Service> logger;
     private readonly ICRMService crmService;
     private readonly IBCService bcService;
-    public Service(ILogger<Service> logger, ICRMService crmService, IBCService bcService)
+    private readonly IStorageService storageService;
+    public Service(ILogger<Service> logger, ICRMService crmService, IBCService bcService, IStorageService storageService)
     {
         this.logger = logger;
         this.crmService = crmService;
         this.bcService = bcService;
+        this.storageService = storageService;
     }
 
     [Function("QueryDataverse")]
@@ -54,5 +56,13 @@ public class Service
         {
             return new OkObjectResult($"Error: {ex.Message}. StackTrace: {ex.StackTrace}") { StatusCode = (int)System.Net.HttpStatusCode.InternalServerError };
         }
+    }
+
+    [Function("GetBlobEtag")]
+    public async Task<IActionResult>GetBlobEtag([HttpTrigger(AuthorizationLevel.Function, "get")] HttpRequest req)
+    {
+        using var reader = new StreamReader(req.Body);
+        BlobRequest blobRequest = System.Text.Json.JsonSerializer.Deserialize<BlobRequest>(await reader.ReadToEndAsync(), new System.Text.Json.JsonSerializerOptions() { PropertyNameCaseInsensitive = true});
+        return new OkObjectResult(await storageService.GetBlobEtag(blobRequest));
     }
 }

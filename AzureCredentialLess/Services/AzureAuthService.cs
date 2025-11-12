@@ -51,6 +51,11 @@ namespace AzureCredentialLess.Services
             return resourcesTokens[resource].AccessToken;
         }
 
+        private Task<string> GetAssertion(CancellationToken token) => GetAssertionWithNoToken();
+
+        private async Task<string> GetAssertionWithNoToken () => (await identityCredential.GetTokenAsync(identityToClientContext)).Token; // the credential caches tokens, so if it has a non-expired one for the context, it won't request another one. 
+        public ClientAssertionCredential GetClientAssertionCredential(string tenantId) => new ClientAssertionCredential(tenantId, GetClientId(), GetAssertion);
+
         /// <summary>
         /// Initializes <see cref="identityCredential"/><br/>
         /// If the environment variable <i>identity_client_id</i> is set, it means it will pick up that user-assigned identity<br/>
@@ -91,7 +96,7 @@ namespace AzureCredentialLess.Services
                 body[kv.Key] = kv.Value;
             }
             body["scope"] = resource + ".default"; // user_impersonation doesn't work in this case
-            body["client_assertion"] = (await identityCredential.GetTokenAsync(identityToClientContext)).Token; // the credential caches tokens, so if it has a non-expired one for the context, it won't request another one.
+            body["client_assertion"] = (await identityCredential.GetTokenAsync(identityToClientContext)).Token; // the credential caches tokens, so if it has a non-expired one for the context, it won't request another one. 
             return body;
         }
         /// <summary>
@@ -102,10 +107,12 @@ namespace AzureCredentialLess.Services
         {
             basicTokenRequestParams = new()
             {
-                [clientIdParamName] = Environment.GetEnvironmentVariable(clientIdParamName),
+                [clientIdParamName] = GetClientId(),
                 ["client_assertion_type"] = "urn:ietf:params:oauth:client-assertion-type:jwt-bearer",
                 ["grant_type"] = "client_credentials"
             };
         }
+
+        private static string GetClientId() => Environment.GetEnvironmentVariable(clientIdParamName);
     }
 }
