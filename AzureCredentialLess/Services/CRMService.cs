@@ -5,28 +5,17 @@ using System.Net.Http.Headers;
 namespace AzureCredentialLess.Services
 {
 
-    public class CRMService : ICRMService
+    public class CRMService :DynamicsCRUDService,ICRMService
     {
         ILogger<CRMService> logger {  get; init; }
-        IAzureAuthService azureAuthService { get; init; }
-        public CRMService(ILogger<CRMService> logger,IAzureAuthService azureAuthService)
+        public CRMService(ILogger<CRMService> logger,IAzureAuthService azureAuthService):base(azureAuthService.GetCredentialLessToken)
         {
             this.logger = logger;
-            this.azureAuthService = azureAuthService;
         }
 
-        public async Task<Result> Get(string tenantId, string url, string query)
+        public new Task<Result> Get(string tenantId, string url, string query)
         {
-            using var client = new HttpClient();
-            HttpRequestHeaders headers = client.DefaultRequestHeaders;
-            headers.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-            headers.Authorization = new AuthenticationHeaderValue("Bearer", await azureAuthService.GetCredentialLessToken(tenantId, url));
-            headers.Add("OData-MaxVersion", "4.0");
-            headers.Add("OData-Version", "4.0");
-
-            var response = await client.GetAsync(url + "api/data/v9.2/" + query);
-            string content = await response.Content.ReadAsStringAsync();
-            return new Result { Content = content, StatusCode = (int)response.StatusCode };
+            return base.Get(tenantId, url, url + "api/data/v9.2/" + query);
         }
 
 
