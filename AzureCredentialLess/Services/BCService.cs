@@ -1,22 +1,22 @@
 ﻿using AzureCredentialLess.Classes;
 using Microsoft.Extensions.Logging;
-using System.Net.Http.Headers;
 
 namespace AzureCredentialLess.Services
 {
 
-    public class BCService : DynamicsCRUDService,IBCService
+    public class BCService : DynamicsCRUDService, IBCService
     {
         ILogger<BCService> logger { get; init; }
-        public BCService(ILogger<BCService> logger, IAzureAuthService azureAuthService):base(azureAuthService.GetCredentialLessToken)
+        public BCService(ILogger<BCService> logger, IAzureAuthService azureAuthService) : base(azureAuthService.GetCredentialLessToken)
         {
             this.logger = logger;
         }
 
-        public Task<Result> Get(string tenantId, string environment, string query)
+        public Task<Result> Get(BCQueryRequest request)
         {
-            return base.Get(tenantId, url, url + "v2.0/" + environment + "/api/v2.0/" + query);
+            return base.Get(request.TenantId, url, url + "v2.0/" + request.EnvironmentName + "/api/v2.0/" + request.ODataQuery);
         }
+
         const string url = "https://api.businesscentral.dynamics.com/";
 
 

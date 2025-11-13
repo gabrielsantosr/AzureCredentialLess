@@ -12,6 +12,7 @@ builder.Services
     .AddSingleton<IAzureAuthService,AzureAuthService>()
     .AddSingleton<ICRMService,CRMService>()
     .AddSingleton<IBCService,BCService>()
+    .AddSingleton<IStorageService,StorageService>()
     .AddApplicationInsightsTelemetryWorkerService()
     .ConfigureFunctionsApplicationInsights();
 
