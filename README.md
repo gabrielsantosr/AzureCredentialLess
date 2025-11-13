@@ -3,7 +3,7 @@ Explorative project to demonstrate the possibility to access resources in a diff
 
 In this project, from an Function App in my tenant, I am querying data on other tenants.
 
-Same can be done from a Logic App, a VM (any kind of resource you can assign a managed identity to), to any other resource in another tenant.
+Same can be done from a Logic App, a VM (any kind of resource to which a managed identity can be assigned to), to any other resource in another tenant.
 
 ## Scenario.
 In the tenant of a company (let's call it "PROVIDER"), there is a Function App that needs to interact with resources of its customers.
