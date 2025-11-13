@@ -12,14 +12,14 @@ In the tenant of a company (let's call it "PROVIDER"), there is a Function App t
 - Function app
 - Managed Identity (MI)
 - Multi-tenant App registration (clientId)
-- Add necessary API permissions that will be consented to. [Cheat sheat](#api-permissions-cheat-sheet)
+- Add necessary API permissions to the App registration. [Cheat sheat](#api-permissions-cheat-sheet)
 - Add a federated credential in the app registration for the MI.
  
  #### _Comments:_
  
  _Regarding the managed Identity, it can be either the Function app's system-assigned or a user-assigned one, assigned to the Function App._
 
- _Specific to this project: It needs added the environment variable (EV) **client_id**, and, if using a sistem-assigned MI, the EV **identity_client_id**._
+ _Specific to this project: It needs added the environment variable (EV) **client_id**, and, if using a user-assigned MI, the EV **identity_client_id**._
 
  #### _API Permissions Cheat Sheet_
 
