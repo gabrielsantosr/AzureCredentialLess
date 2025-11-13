@@ -21,6 +21,14 @@ In the tenant of a company (let's call it "PROVIDER"), there is a Function App t
 
  _Specific to this project: It needs added the environment variable (EV) **client_id**, and, if using a sistem-assigned MI, the EV **identity_client_id**._
 
+ #### _API Permissions Cheat Sheet_
+
+| Resource | API permissions |
+| - | - |
+| BC | API.ReadWrite.All, Automation.ReadWrite.All
+| CRM | _None_
+| Storage Account| _None_ |
+
 ## What is necessary in each customer's tenant:
 - _This step is **not necessary for BC**. If not yet existent, the service principal is created and its API permissions granted when consent is granted from the BC environment._ Service principal with the id of PROVIDER's App registration ( This can be done using azure cli `az ad sp create --id <client-id>` , azure power shell or http request). _This step is not necessary for BC. If not yet existent, the service principal is created and its API permissions granted when consent is granted from the BC environment._
 - Include the service principal as an app user of the Dataverse (It won't show up in the list when you try to add it; type the clientId to see it.) or Microsoft Entra Application in the BC environment.
@@ -34,13 +42,47 @@ You could still use certificates or secrets, if you are used to it. The multi-te
 needed.
 Adding the federated credential eliminates credential management altogether.
 
-#### API Permissions Cheat Sheet
+## EndPoints
+_Comment: Add the function key in the `x-functions-key` header or the query `code` parameter_.  
 
-| Resource | API permissions |
-| - | - |
-| BC | API.ReadWrite.All, Automation.ReadWrite.All
-| CRM | _None_
-| Storage Account| _None_ |
+##### QueryBC
+Method: POST
+
+Body sample:
+```
+{
+	"TenantId":"00000000-0000-0000-0000-000000000000",
+	"EnvironmentName":"production",
+	"ODataQuery":"companies?$select=id,name"
+}
+```
+
+##### QueryDataverse
+Method: POST
+
+Body sample:
+```
+{
+	"TenantId":"00000000-0000-0000-0000-000000000000",
+	"EnvironmentUrl":"https://my-crm.crm11.dynamics.com/",
+	"ODataQuery":"accounts?$top=1&$select=name,_defaultpricelevelid_value"
+}
+```
+
+##### GetBlobsDetails
+Method: POST
+
+Body sample:
+```
+{
+    "TenantId":"00000000-0000-0000-0000-000000000000",
+    "Account":"mystorageaccountname",
+    "Container":"my-container-name",
+    "BlobsPrefix": "myfolder/" // can be null
+}
+```
+
+
 ## References
 
 https://dreamingincrm.com/2025/02/06/secretless-cross-tenant-access-logic-apps-dataverse/
