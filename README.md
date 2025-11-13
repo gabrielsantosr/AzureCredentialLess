@@ -12,19 +12,19 @@ In the tenant of a company (let's call it "PROVIDER"), there is a Function App t
 - Function app
 - Managed Identity (MI)
 - Multi-tenant App registration (clientId)
+- Add necessary API permissions that will be consented to. [Cheat sheat](#api-permissions-cheat-sheet)
 - Add a federated credential in the app registration for the MI.
  
  #### _Comments:_
- _I found it is not necessary to grant user_impersonation API permission to the App registration for CRM._
-
+ 
  _Regarding the managed Identity, it can be either the Function app's system-assigned or a user-assigned one, assigned to the Function App._
 
  _Specific to this project: It needs added the environment variable (EV) **client_id**, and, if using a sistem-assigned MI, the EV **identity_client_id**._
 
 ## What is necessary in each customer's tenant:
-- Service principal with the id of PROVIDER's App registration ( This can be done using azure cli `az ad sp create --id <client-id>` , azure power shell or http request). _This step is not necessary for BC. If not yet existent, the service principal is created and its API permissions granted when consent is granted from the BC environment._
+- _This step is **not necessary for BC**. If not yet existent, the service principal is created and its API permissions granted when consent is granted from the BC environment._ Service principal with the id of PROVIDER's App registration ( This can be done using azure cli `az ad sp create --id <client-id>` , azure power shell or http request). _This step is not necessary for BC. If not yet existent, the service principal is created and its API permissions granted when consent is granted from the BC environment._
 - Include the service principal as an app user of the Dataverse (It won't show up in the list when you try to add it; type the clientId to see it.) or Microsoft Entra Application in the BC environment.
-- Grant necessary roles to the app user within Dataverse or BC
+- For CRM and BC, grant necessary roles to the app user within Dataverse or BC. For Azure subscription resources, grant necessary access to the service principal from Access Control (IAM). 
 
 By including a local Service Principal of PROVIDER's App Registration, customers can grant PROVIDER whichever roles they need in their CRM or ERP environments, or their Azure resources.
 
@@ -34,6 +34,13 @@ You could still use certificates or secrets, if you are used to it. The multi-te
 needed.
 Adding the federated credential eliminates credential management altogether.
 
+#### API Permissions Cheat Sheet
+
+| Resource | API permissions |
+| - | - |
+| BC | API.ReadWrite.All, Automation.ReadWrite.All
+| CRM | _None_
+| Storage Account| _None_ |
 ## References
 
 https://dreamingincrm.com/2025/02/06/secretless-cross-tenant-access-logic-apps-dataverse/
