@@ -1,4 +1,5 @@
 using AzureCredentialLess.Classes;
+using AzureCredentialLess.Helpers;
 using AzureCredentialLess.Services;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -22,17 +23,12 @@ public class Service
     }
 
     [Function("QueryDataverse")]
-    public async Task<IActionResult> QueryDataverse([HttpTrigger(AuthorizationLevel.Function, "get")] HttpRequest req)
+    public async Task<IActionResult> QueryDataverse([HttpTrigger(AuthorizationLevel.Function, "POST")] HttpRequest req)
     {
         try
         {
-            var tenantId = req.Query["tenant-id"][0];
-            var url = req.Query["url"][0];
-            var query = req.Query["query"][0];
-
-            if (!url.EndsWith("/"))
-                url += "/";
-            Result result = await crmService.Get(tenantId, url, query);
+            DataverseQueryRequest request = await HttpHelper.ParseBody<DataverseQueryRequest>(req.Body);
+            Result result = await crmService.Get(request);
             return new OkObjectResult(result.Content) { StatusCode = result.StatusCode };
         }
         catch (Exception ex)
@@ -41,15 +37,12 @@ public class Service
         }
     }
     [Function("QueryBC")]
-    public async Task<IActionResult> QueryBC([HttpTrigger(AuthorizationLevel.Function, "get")] HttpRequest req)
+    public async Task<IActionResult> QueryBC([HttpTrigger(AuthorizationLevel.Function, "POST")] HttpRequest req)
     {
         try
         {
-            var tenantId = req.Query["tenant-id"][0];
-            var environment = req.Query["environment"][0];
-            var query = req.Query["query"][0];
-
-            Result result = await bcService.Get(tenantId, environment, query);
+            BCQueryRequest request = await HttpHelper.ParseBody<BCQueryRequest>(req.Body);
+            Result result = await bcService.Get(request);
             return new OkObjectResult(result.Content) { StatusCode = result.StatusCode };
         }
         catch (Exception ex)
@@ -58,11 +51,18 @@ public class Service
         }
     }
 
-    [Function("GetBlobEtag")]
-    public async Task<IActionResult>GetBlobEtag([HttpTrigger(AuthorizationLevel.Function, "get")] HttpRequest req)
+    [Function("GetBlobsDetails")]
+    public async Task<IActionResult> GetBlobsDetails([HttpTrigger(AuthorizationLevel.Function, "POST")] HttpRequest req)
     {
-        using var reader = new StreamReader(req.Body);
-        BlobRequest blobRequest = System.Text.Json.JsonSerializer.Deserialize<BlobRequest>(await reader.ReadToEndAsync(), new System.Text.Json.JsonSerializerOptions() { PropertyNameCaseInsensitive = true});
-        return new OkObjectResult(await storageService.GetBlobEtag(blobRequest));
+        try
+        {
+            using var reader = new StreamReader(req.Body);
+            BlobCollectionRequest request = await HttpHelper.ParseBody<BlobCollectionRequest>(req.Body);
+            return new OkObjectResult(await storageService.GetBlobsDetails(request));
+        }
+        catch (Exception ex)
+        {
+            return new OkObjectResult($"Error: {ex.Message}. StackTrace: {ex.StackTrace}") { StatusCode = (int)System.Net.HttpStatusCode.InternalServerError };
+        }
     }
 }

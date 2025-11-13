@@ -1,7 +1,5 @@
-﻿using Azure.Identity;
-using Azure.Storage.Blobs;
+﻿using Azure.Storage.Blobs;
 using AzureCredentialLess.Classes;
-using static System.Net.WebRequestMethods;
 
 namespace AzureCredentialLess.Services
 {
@@ -12,14 +10,25 @@ namespace AzureCredentialLess.Services
         {
             this.azureAuthService = azureAuthService;
         }
-        public async Task<string> GetBlobEtag(BlobRequest blobRequest)
+        public async Task<List<BlobDetail>> GetBlobsDetails(BlobCollectionRequest request)
         {
-            string blobURL = $"https://{blobRequest.Account}.blob.core.windows.net/{blobRequest.Container}/{blobRequest.Blob}";
-            var credential = azureAuthService.GetClientAssertionCredential(blobRequest.TenantId);
-            BlobClient client = new BlobClient(new Uri(blobURL), credential);
-            var props = await client.GetPropertiesAsync();
-            return props.Value.ETag.ToString();
-
+            string blobURL = $"https://{request.Account}.blob.core.windows.net/{request.Container}";
+            var credential = azureAuthService.GetClientAssertionCredential(request.TenantId);
+            BlobContainerClient client = new BlobContainerClient(new Uri(blobURL), credential);
+            var asyncBlobCollection = client.GetBlobsAsync(prefix: request.BlobsPrefix);
+            List<BlobDetail> output = new();
+            await foreach (var blob in asyncBlobCollection)
+            {
+                output.Add(new BlobDetail()
+                {
+                    Name = blob.Name,
+                    Type = blob.Properties.BlobType.HasValue ? blob.Properties.BlobType.Value.ToString() : null,
+                    SizeInBytes = blob.Properties.ContentLength.HasValue ? blob.Properties.ContentLength.Value : 0
+                });
+            }
+            return output;
         }
+
+
     }
 }

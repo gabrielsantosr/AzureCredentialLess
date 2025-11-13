@@ -1,9 +1,7 @@
 # AzureCredentialLess
 Explorative project to demonstrate the possibility to access resources in a different tenant without using passwords, nor secrets, nor certificates.
 
-In this project, from an Function App in my tenant, I am querying data stored in Dynamics CRM environments in other tenants, and Dinamics Business Central in other tenants.
-
-Further examples will be added, querying data from subscription-located resources, such as storage accounts and key vaults.
+In this project, from an Function App in my tenant, I am querying data on other tenants.
 
 Same can be done from a Logic App, a VM (any kind of resource you can assign a managed identity to), to any other resource in another tenant.
 
@@ -34,7 +32,7 @@ PROVIDER, from their side, can manage authentication however they want to.
 
 You could still use certificates or secrets, if you are used to it. The multi-tenancy is already solving the problem of having to handle customers' secrets, because the credentials are managed from your App registration, from your tenant, and there is only one credential
 needed.
-Adding the federated credential eliminates the need of credentials altogether.
+Adding the federated credential eliminates credential management altogether.
 
 ## References
 
