@@ -88,7 +88,7 @@ namespace AzureCredentialLess.Services
         {
             if (string.IsNullOrWhiteSpace(basicTokenRequestParams[clientIdParamName]))
             {
-                throw new Exception($"There is no value in environment variable {clientIdParamName}");
+                throw new Exception($"There is no value set to environment variable '{clientIdParamName}'.");
             }
             Dictionary<string, string> body = new();
             foreach (var kv in basicTokenRequestParams)
