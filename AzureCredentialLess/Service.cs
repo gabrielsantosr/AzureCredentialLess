@@ -14,12 +14,14 @@ public class Service
     private readonly ICRMService crmService;
     private readonly IBCService bcService;
     private readonly IStorageService storageService;
-    public Service(ILogger<Service> logger, ICRMService crmService, IBCService bcService, IStorageService storageService)
+    private readonly IKeyVaultService keyVaultService;
+    public Service(ILogger<Service> logger, ICRMService crmService, IBCService bcService, IStorageService storageService, IKeyVaultService keyVaultService)
     {
         this.logger = logger;
         this.crmService = crmService;
         this.bcService = bcService;
         this.storageService = storageService;
+        this.keyVaultService = keyVaultService;
     }
 
     [Function("QueryDataverse")]
@@ -28,7 +30,7 @@ public class Service
         try
         {
             DataverseQueryRequest request = await HttpHelper.ParseBody<DataverseQueryRequest>(req.Body);
-            Result result = await crmService.Get(request);
+            Result result = await crmService.Retrieve(request);
             return new OkObjectResult(result.Content) { StatusCode = result.StatusCode };
         }
         catch (Exception ex)
@@ -42,7 +44,7 @@ public class Service
         try
         {
             BCQueryRequest request = await HttpHelper.ParseBody<BCQueryRequest>(req.Body);
-            Result result = await bcService.Get(request);
+            Result result = await bcService.Retrieve(request);
             return new OkObjectResult(result.Content) { StatusCode = result.StatusCode };
         }
         catch (Exception ex)
@@ -59,6 +61,20 @@ public class Service
             using var reader = new StreamReader(req.Body);
             BlobCollectionRequest request = await HttpHelper.ParseBody<BlobCollectionRequest>(req.Body);
             return new OkObjectResult(await storageService.GetBlobsDetails(request));
+        }
+        catch (Exception ex)
+        {
+            return new OkObjectResult($"Error: {ex.Message}. StackTrace: {ex.StackTrace}") { StatusCode = (int)System.Net.HttpStatusCode.InternalServerError };
+        }
+    }
+    [Function("GetKeyVaultSecret")]
+    public async Task<IActionResult> GetKeyVaultSecret([HttpTrigger(AuthorizationLevel.Function, "POST")] HttpRequest req)
+    {
+        try
+        {
+            using var reader = new StreamReader(req.Body);
+            KeyVaultSecretRequest request = await HttpHelper.ParseBody<KeyVaultSecretRequest>(req.Body);
+            return new OkObjectResult(await keyVaultService.GetSecret(request));
         }
         catch (Exception ex)
         {

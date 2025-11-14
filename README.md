@@ -27,10 +27,11 @@ In the tenant of a company (let's call it "PROVIDER"), there is a Function App t
 | - | - |
 | BC | API.ReadWrite.All, Automation.ReadWrite.All
 | CRM | _None_
-| Storage Account| _None_ |
+| Storage Account | _None_ |
+| Key Vault | _None_ |
 
 ## What is necessary in each customer's tenant:
-- _This step is **not necessary for BC**. If not yet existent, the service principal is created and its API permissions granted when consent is granted from the BC environment._ Service principal with the id of PROVIDER's App registration ( This can be done using azure cli `az ad sp create --id <client-id>` , azure power shell or http request). _This step is not necessary for BC. If not yet existent, the service principal is created and its API permissions granted when consent is granted from the BC environment._
+- Create Service principal with the id of PROVIDER's App registration ( This can be done using azure cli `az ad sp create --id <client-id>` , azure power shell or http request). :exclamation::exclamation:_This step is **not necessary for BC**: If not yet existent, the service principal is created and its API permissions granted when consent is granted from the BC environment._ 
 - Include the service principal as an app user of the Dataverse (It won't show up in the list when you try to add it; type the clientId to see it.) or Microsoft Entra Application in the BC environment.
 - For CRM and BC, grant necessary roles to the app user within Dataverse or BC. For Azure subscription resources, grant necessary access to the service principal from Access Control (IAM). 
 
@@ -79,6 +80,18 @@ Body sample:
     "Account":"mystorageaccountname",
     "Container":"my-container-name",
     "BlobsPrefix": "myfolder/" // can be null
+}
+```
+
+##### GetKeyVaultSecret
+Method: POST
+
+Body sample:
+```
+{
+    "TenantId":"00000000-0000-0000-0000-000000000000",
+    "KeyVaultName":"my-kv-name",
+    "KeyVaultSecret":"mySecretName"
 }
 ```
 

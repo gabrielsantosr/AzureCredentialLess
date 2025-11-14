@@ -12,14 +12,16 @@ namespace AzureCredentialLess.Services
             this.logger = logger;
         }
 
-        public new Task<Result> Get(DataverseQueryRequest request)
+        public new Task<Result> Retrieve(DataverseQueryRequest request)
         {
-            string url = (request.EnvironmentUrl ?? string.Empty);
-            if (!url.EndsWith("/"))
+            string resource = (request.EnvironmentUrl ?? string.Empty);
+            if (!resource.EndsWith("/"))
             {
-                url += "/";
+                resource += "/";
             }
-            return base.Get(request.TenantId, url, url + "api/data/v9.2/" + request.ODataQuery);
+            string fullURL = string.Format("{0}api/data/v9.2/{1}", resource, request.ODataQuery);
+
+            return base.Retrieve(request.TenantId, resource, fullURL);
         }
     }
 }

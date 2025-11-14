@@ -4,6 +4,6 @@ namespace AzureCredentialLess.Services
 {
     public interface IBCService
     {
-        Task<Result> Get(BCQueryRequest request);
+        Task<Result> Retrieve(BCQueryRequest request);
     }
 }

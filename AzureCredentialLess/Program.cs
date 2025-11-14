@@ -13,6 +13,7 @@ builder.Services
     .AddSingleton<ICRMService,CRMService>()
     .AddSingleton<IBCService,BCService>()
     .AddSingleton<IStorageService,StorageService>()
+    .AddSingleton<IKeyVaultService,KeyVaultService>()
     .AddApplicationInsightsTelemetryWorkerService()
     .ConfigureFunctionsApplicationInsights();
 

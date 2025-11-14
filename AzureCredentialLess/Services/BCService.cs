@@ -12,12 +12,13 @@ namespace AzureCredentialLess.Services
             this.logger = logger;
         }
 
-        public Task<Result> Get(BCQueryRequest request)
+        public Task<Result> Retrieve(BCQueryRequest request)
         {
-            return base.Get(request.TenantId, url, url + "v2.0/" + request.EnvironmentName + "/api/v2.0/" + request.ODataQuery);
+            string fullURL = string.Format("{0}v2.0/{1}/api/v2.0/{2}", resource, request.EnvironmentName, request.ODataQuery);
+            return base.Retrieve(request.TenantId, resource, fullURL);
         }
 
-        const string url = "https://api.businesscentral.dynamics.com/";
+        const string resource = "https://api.businesscentral.dynamics.com/";
 
 
 
