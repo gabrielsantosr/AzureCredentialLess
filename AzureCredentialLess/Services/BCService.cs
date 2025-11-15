@@ -7,7 +7,7 @@ namespace AzureCredentialLess.Services
     public class BCService : DynamicsCRUDService, IBCService
     {
         ILogger<BCService> logger { get; init; }
-        public BCService(ILogger<BCService> logger, IAzureAuthService azureAuthService) : base(azureAuthService.GetCredentialLessToken)
+        public BCService(ILogger<BCService> logger, IAzureAuthService azureAuthService) : base(azureAuthService)
         {
             this.logger = logger;
         }

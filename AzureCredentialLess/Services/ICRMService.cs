@@ -4,6 +4,7 @@ namespace AzureCredentialLess.Services
 {
     public interface ICRMService
     {
-        Task<Result> Retrieve(DataverseQueryRequest request);
+        Task<Result> FetchOData(DataverseODataQueryRequest request);
+        Result FetchXML(DataverseFetchXMLQueryRequest request);
     }
 }

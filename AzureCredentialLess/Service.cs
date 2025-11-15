@@ -29,8 +29,22 @@ public class Service
     {
         try
         {
-            DataverseQueryRequest request = await HttpHelper.ParseBody<DataverseQueryRequest>(req.Body);
-            Result result = await crmService.Retrieve(request);
+            DataverseODataQueryRequest request = await HttpHelper.ParseBody<DataverseODataQueryRequest>(req.Body);
+            Result result = await crmService.FetchOData(request);
+            return new OkObjectResult(result.Content) { StatusCode = result.StatusCode };
+        }
+        catch (Exception ex)
+        {
+            return new OkObjectResult($"Error: {ex.Message}. StackTrace: {ex.StackTrace}") { StatusCode = (int)System.Net.HttpStatusCode.InternalServerError };
+        }
+    }
+    [Function("FetchDataverse")]
+    public async Task<IActionResult> FetchDataverse([HttpTrigger(AuthorizationLevel.Function, "POST")] HttpRequest req)
+    {
+        try
+        {
+            DataverseFetchXMLQueryRequest request = await HttpHelper.ParseBody<DataverseFetchXMLQueryRequest>(req.Body);
+            Result result = crmService.FetchXML(request);
             return new OkObjectResult(result.Content) { StatusCode = result.StatusCode };
         }
         catch (Exception ex)

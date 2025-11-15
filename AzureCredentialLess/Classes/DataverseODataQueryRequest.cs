@@ -1,6 +1,6 @@
 ﻿namespace AzureCredentialLess.Classes
 {
-    public class DataverseQueryRequest : ODataQueryRequest
+    public class DataverseODataQueryRequest : ODataQueryRequest
     {
         public string EnvironmentUrl { get; set; }
     }
