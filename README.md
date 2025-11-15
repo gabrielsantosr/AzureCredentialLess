@@ -59,6 +59,8 @@ Body sample:
 ```
 
 ##### QueryDataverse
+_(Using HTTPClient)_
+
 Method: POST
 
 Body sample:
@@ -67,6 +69,19 @@ Body sample:
 	"TenantId":"00000000-0000-0000-0000-000000000000",
 	"EnvironmentUrl":"https://my-crm.crm11.dynamics.com/",
 	"ODataQuery":"accounts?$top=1&$select=name,_defaultpricelevelid_value"
+}
+```
+
+##### FetchDataverse
+_(Using ServiceClient)_
+Method: POST
+
+Body sample:
+```
+{
+	"TenantId":"00000000-0000-0000-0000-000000000000",
+	"EnvironmentUrl":"https://my-crm.crm11.dynamics.com/",
+	"FetchXML":"<fetch><entity name='account'><attribute name='name' /></entity></fetch>"
 }
 ```
 

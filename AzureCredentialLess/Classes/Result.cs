@@ -2,7 +2,7 @@
 {
     public class Result
     {
-        public string Content { get; init; }
+        public string Content { get; set; }
         public int StatusCode { get; set; }
     }
 }

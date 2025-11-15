@@ -6,12 +6,10 @@ namespace AzureCredentialLess.Services
 {
     public abstract class DynamicsCRUDService
     {
-        protected delegate Task<string> TokenGetter(string tenantId, string resource);
-
-        private TokenGetter tokenGetter;
-        protected DynamicsCRUDService(TokenGetter tokenGetter)
+        protected IAzureAuthService azureAuthService;
+        protected DynamicsCRUDService(IAzureAuthService azureAuthService)
         {
-            this.tokenGetter = tokenGetter;
+            this.azureAuthService = azureAuthService;
         }
         protected Task<Result> Create(string tenantId, string resource, string fullURL, object payload) => Request(Enums.CRUD.Retrieve, tenantId, resource, fullURL, payload);
         protected Task<Result> Retrieve(string tenantId, string resource, string fullURL) => Request(Enums.CRUD.Retrieve, tenantId, resource, fullURL);
@@ -26,7 +24,7 @@ namespace AzureCredentialLess.Services
             using var client = new HttpClient();
             HttpRequestHeaders headers = client.DefaultRequestHeaders;
             headers.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-            headers.Authorization = new AuthenticationHeaderValue("Bearer", await tokenGetter(tenantId, resource));
+            headers.Authorization = new AuthenticationHeaderValue("Bearer", await azureAuthService.GetCredentialLessToken(tenantId, resource));
             headers.Add("OData-MaxVersion", "4.0");
             headers.Add("OData-Version", "4.0");
             headers.Add("Prefer", "odata.include-annotations=*");

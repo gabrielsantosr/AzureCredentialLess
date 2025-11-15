@@ -1,18 +1,20 @@
 ﻿using AzureCredentialLess.Classes;
 using Microsoft.Extensions.Logging;
+using Microsoft.PowerPlatform.Dataverse.Client;
+using Microsoft.Xrm.Sdk;
+using Microsoft.Xrm.Sdk.Query;
 
 namespace AzureCredentialLess.Services
 {
-
     public class CRMService : DynamicsCRUDService, ICRMService
     {
         ILogger<CRMService> logger { get; init; }
-        public CRMService(ILogger<CRMService> logger, IAzureAuthService azureAuthService) : base(azureAuthService.GetCredentialLessToken)
+        public CRMService(ILogger<CRMService> logger, IAzureAuthService azureAuthService) : base(azureAuthService)
         {
             this.logger = logger;
         }
 
-        public new Task<Result> Retrieve(DataverseQueryRequest request)
+        public Task<Result> FetchOData(DataverseODataQueryRequest request)
         {
             string resource = (request.EnvironmentUrl ?? string.Empty);
             if (!resource.EndsWith("/"))
@@ -22,6 +24,20 @@ namespace AzureCredentialLess.Services
             string fullURL = string.Format("{0}api/data/v9.2/{1}", resource, request.ODataQuery);
 
             return base.Retrieve(request.TenantId, resource, fullURL);
+        }
+
+        public Result FetchXML(DataverseFetchXMLQueryRequest request)
+        {
+
+            var service = GetService(request.TenantId, request.EnvironmentUrl);
+            var results = service.RetrieveMultiple(new FetchExpression(request.FetchXML)).Entities;
+            return new Result() { Content = System.Text.Json.JsonSerializer.Serialize(results), StatusCode = 200 };
+
+        }
+
+        private IOrganizationService GetService(string tenantId, string environmentURL)
+        {
+            return new ServiceClient(new Uri(environmentURL), url => azureAuthService.GetCredentialLessToken(tenantId, environmentURL));
         }
     }
 }
