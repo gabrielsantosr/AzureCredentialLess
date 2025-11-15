@@ -37,18 +37,19 @@ namespace AzureCredentialLess.Services
 
         public async Task<string> GetCredentialLessToken(string tenantId, string resource)
         {
+            string tokenKey = string.Format("{0}|{1}",tenantId,resource);
 
-            if (!resourcesTokens.ContainsKey(resource) || resourcesTokens[resource].IsExpired)
+            if (!resourcesTokens.ContainsKey(tokenKey) || resourcesTokens[tokenKey].IsExpired)
             {
                 using (HttpClient client = new HttpClient())
                 {
                     string url = $"https://login.microsoftonline.com/{tenantId}/oauth2/v2.0/token";
                     var RequestContent = new FormUrlEncodedContent(await GetTokenRequestParams(resource));
                     var response = await client.PostAsync($"https://login.microsoftonline.com/{tenantId}/oauth2/v2.0/token", RequestContent);
-                    resourcesTokens[resource] = System.Text.Json.JsonSerializer.Deserialize<Token>(await response.Content.ReadAsStringAsync());
+                    resourcesTokens[tokenKey] = System.Text.Json.JsonSerializer.Deserialize<Token>(await response.Content.ReadAsStringAsync());
                 }
             }
-            return resourcesTokens[resource].AccessToken;
+            return resourcesTokens[tokenKey].AccessToken;
         }
 
         private Task<string> GetAssertion(CancellationToken token) => GetAssertionWithNoToken();
