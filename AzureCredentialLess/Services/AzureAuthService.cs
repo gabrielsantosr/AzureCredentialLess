@@ -45,7 +45,7 @@ namespace AzureCredentialLess.Services
                 {
                     string url = $"https://login.microsoftonline.com/{tenantId}/oauth2/v2.0/token";
                     var RequestContent = new FormUrlEncodedContent(await GetTokenRequestParams(resource));
-                    var response = await client.PostAsync($"https://login.microsoftonline.com/{tenantId}/oauth2/v2.0/token", RequestContent);
+                    var response = await client.PostAsync(url, RequestContent);
                     resourcesTokens[tokenKey] = System.Text.Json.JsonSerializer.Deserialize<Token>(await response.Content.ReadAsStringAsync());
                 }
             }
