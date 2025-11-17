@@ -5,6 +5,14 @@ In this project, from an Function App in my tenant, I am querying data on other 
 
 Same can be done from a Logic App, a VM (any kind of resource to which a managed identity can be assigned to), to any other resource in another tenant.
 
+There are two concepts that are being put together here:
+1) **Multi-tenancy:** Using a multi-tenant app registration allows the creation of service principals in other tenants. The authentication method (secret, certificate and/or federated credentials), are managed from your tenant. Other tenants admins can determine which resources their local service principal has access to. You manage your credentials, they manage your access within their tenant.
+2) **Federated credentials:** You can add a federated credential to your app registration to trust a managed identity within your tenant. And you can use that managed identity as an identity of a Function App or a Web App. That way, your app does not need to hold credentials to authenticate with your App Registration.
+
+**App :arrow_right: Managed Identity :arrow_right: App registration :arrow_right: Service principal** 
+
+
+
 ## Scenario.
 In the tenant of a company (let's call it "PROVIDER"), there is a Function App that needs to interact with resources of its customers.
 
@@ -118,3 +126,6 @@ https://dreamingincrm.com/2025/02/06/secretless-cross-tenant-access-logic-apps-d
 https://devblogs.microsoft.com/identity/access-cloud-resources-across-tenants-without-secrets/
 
 https://learn.microsoft.com/en-us/azure/devops/integrate/get-started/authentication/service-principal-managed-identity?view=azure-devops
+
+Also, there is still missing an approach for testing, since the managed identity won't be accessible from local execution. TO DO: Replace ManagedIdentity with defaultAzureCredentials. https://learn.microsoft.com/en-us/dotnet/api/azure.identity.defaultazurecredential?view=azure-dotnet
+See also: https://dreamingincrm.com/2021/11/16/connecting-to-dataverse-from-function-app-using-managed-identity/
