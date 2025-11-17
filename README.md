@@ -127,5 +127,10 @@ https://devblogs.microsoft.com/identity/access-cloud-resources-across-tenants-wi
 
 https://learn.microsoft.com/en-us/azure/devops/integrate/get-started/authentication/service-principal-managed-identity?view=azure-devops
 
-Also, there is still missing an approach for testing, since the managed identity won't be accessible from local execution. TO DO: Replace ManagedIdentity with defaultAzureCredentials. https://learn.microsoft.com/en-us/dotnet/api/azure.identity.defaultazurecredential?view=azure-dotnet
-See also: https://dreamingincrm.com/2021/11/16/connecting-to-dataverse-from-function-app-using-managed-identity/
+## To Do
+The is still the question regarding unit tests, since the managed identity won't be accessible from local execution.
+Probably replacing ManagedIdentity with DefaultAzureCredentials. See: https://learn.microsoft.com/en-us/dotnet/api/azure.identity.defaultazurecredential?view=azure-dotnet, which will still pick up the managed identity online.
+
+I also found this article, which is not exactly the same scenario, but could help: 
+https://dreamingincrm.com/2021/11/16/connecting-to-dataverse-from-function-app-using-managed-identity/
+Something interesting about this last mentioned linked, is that it is using the managed identity as the service user of the CRM, instead of a service principal. 
