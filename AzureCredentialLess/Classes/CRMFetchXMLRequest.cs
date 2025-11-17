@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace AzureCredentialLess.Classes
 {
-    public class DataverseFetchXMLQueryRequest: AzureRequest
+    public class CRMFetchXMLRequest: AzureRequest
     {
         public string EnvironmentUrl { get; set; }
         public string FetchXML { get; set; }

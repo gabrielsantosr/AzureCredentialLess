@@ -1,15 +1,13 @@
-﻿using Azure.Core;
+﻿using Azure.Identity;
 
 namespace AzureCredentialLess.Services
 {
     public abstract class AzureResourceService
     {
-        private IAzureAuthService azureAuthService;
+        protected IAzureAuthService azureAuthService;
         protected AzureResourceService(IAzureAuthService azureAuthService)
         {
             this.azureAuthService = azureAuthService;
         }
-        protected TokenCredential GetCredential(string tenantId) => azureAuthService.GetClientAssertionCredential(tenantId);
-
     }
 }

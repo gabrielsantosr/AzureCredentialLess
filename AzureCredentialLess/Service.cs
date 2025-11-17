@@ -29,7 +29,7 @@ public class Service
     {
         try
         {
-            DataverseODataQueryRequest request = await HttpHelper.ParseBody<DataverseODataQueryRequest>(req.Body);
+            CRMFetchODataRequest request = await HttpHelper.ParseBody<CRMFetchODataRequest>(req.Body);
             Result result = await crmService.FetchOData(request);
             return new OkObjectResult(result.Content) { StatusCode = result.StatusCode };
         }
@@ -43,7 +43,7 @@ public class Service
     {
         try
         {
-            DataverseFetchXMLQueryRequest request = await HttpHelper.ParseBody<DataverseFetchXMLQueryRequest>(req.Body);
+            CRMFetchXMLRequest request = await HttpHelper.ParseBody<CRMFetchXMLRequest>(req.Body);
             Result result = crmService.FetchXML(request);
             return new OkObjectResult(result.Content) { StatusCode = result.StatusCode };
         }
