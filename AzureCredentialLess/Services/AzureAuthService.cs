@@ -37,7 +37,9 @@ namespace AzureCredentialLess.Services
 
         public async Task<string> GetCredentialLessToken(string tenantId, string resource)
         {
-            string tokenKey = string.Format("{0}|{1}",tenantId,resource);
+            tenantId = (tenantId ?? string.Empty).ToLower();
+            resource = (resource ?? string.Empty).ToLower();
+            string tokenKey = string.Format("{0}|{1}", tenantId, resource);
 
             if (!resourcesTokens.ContainsKey(tokenKey) || resourcesTokens[tokenKey].IsExpired)
             {
@@ -52,9 +54,9 @@ namespace AzureCredentialLess.Services
             return resourcesTokens[tokenKey].AccessToken;
         }
 
-        private Task<string> GetAssertion(CancellationToken token) => GetAssertionWithNoToken();
+        private Task<string> GetAssertion(CancellationToken token) => GetAssertion();
 
-        private async Task<string> GetAssertionWithNoToken () => (await identityCredential.GetTokenAsync(identityToClientContext)).Token; // the credential caches tokens, so if it has a non-expired one for the context, it won't request another one. 
+        private async Task<string> GetAssertion() => (await identityCredential.GetTokenAsync(identityToClientContext)).Token; // the credential caches tokens, so if it has a non-expired one for the context, it won't request another one. 
         public ClientAssertionCredential GetClientAssertionCredential(string tenantId) => new ClientAssertionCredential(tenantId, GetClientId(), GetAssertion);
 
         /// <summary>

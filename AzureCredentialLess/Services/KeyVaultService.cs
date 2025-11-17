@@ -23,7 +23,7 @@ namespace AzureCredentialLess.Services
         private SecretClient GetSecretClient(KeyVaultRequest request)
         {
             var vaultURI = string.Format("https://{0}.vault.azure.net/", request.KeyVaultName);
-            var credential = GetCredential(request.TenantId);
+            var credential = azureAuthService.GetClientAssertionCredential(request.TenantId);
             return new SecretClient(new Uri(vaultURI), credential);
         }
 

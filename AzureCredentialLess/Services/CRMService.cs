@@ -14,7 +14,7 @@ namespace AzureCredentialLess.Services
             this.logger = logger;
         }
 
-        public Task<Result> FetchOData(DataverseODataQueryRequest request)
+        public Task<Result> FetchOData(CRMFetchODataRequest request)
         {
             string resource = (request.EnvironmentUrl ?? string.Empty);
             if (!resource.EndsWith("/"))
@@ -26,11 +26,11 @@ namespace AzureCredentialLess.Services
             return base.Retrieve(request.TenantId, resource, fullURL);
         }
 
-        public Result FetchXML(DataverseFetchXMLQueryRequest request)
+        public Result FetchXML(CRMFetchXMLRequest request)
         {
 
             var service = GetService(request.TenantId, request.EnvironmentUrl);
-            var results = service.RetrieveMultiple(new FetchExpression(request.FetchXML)).Entities;
+            var results = service.RetrieveMultiple(new FetchExpression(request.FetchXML));
             return new Result() { Content = System.Text.Json.JsonSerializer.Serialize(results), StatusCode = 200 };
 
         }
