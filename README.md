@@ -3,6 +3,7 @@ Explorative project to demonstrate the possibility to access resources in a diff
 
 ### Scenarios
 **1)** I am querying data on other tenants. **App :arrow_right: Managed Identity :arrow_right: App registration :arrow_right: Service principal :arrow_right: Resource**
+
 **2)** I am querying data on my tenant **App :arrow_right: Managed Identity :arrow_right: Resource**
 
 Same can be done from a Logic App, a VM (any kind of resource to which a managed identity can be assigned to), to any other resource in another tenant.
