@@ -9,6 +9,12 @@ namespace AzureCredentialLess.Services
 
         const string clientIdParamName = "client_id";
 
+
+        /// <summary>
+        ///  Audience to get the <i>ManagedIdentity-to-Client</i> tokens
+        /// </summary>
+        const string federatedCredentialAudience = "api://AzureADTokenExchange/";
+
         /// <summary>
         /// Dictionary to cache the <i>Client-to-Resource</i> tokens
         /// </summary>
@@ -18,11 +24,7 @@ namespace AzureCredentialLess.Services
         /// Managed Identity token issuer.
         /// It generates and caches the <i>ManagedIdentity-to-Client</i> tokens
         /// </summary>
-        private ManagedIdentityCredential identityCredential;
-        /// <summary>
-        ///  Context to get the <i>ManagedIdentity-to-Client</i> tokens
-        /// </summary>
-        private TokenRequestContext identityToClientContext;
+        public ManagedIdentityCredential IdentityCredential { get; private set; }
         /// <summary>
         ///  Dictionary containing the parameters needed for the <i>Client-to-Resource</i> token POST request that are always the same.
         /// </summary>
@@ -32,10 +34,9 @@ namespace AzureCredentialLess.Services
             resourcesTokens = new();
             InitManagedIdentityCredential();
             InitBasicTokenRequestParams();
-            identityToClientContext = new TokenRequestContext(new[] { $"api://AzureADTokenExchange/.default" });
         }
 
-        public async Task<string> GetCredentialLessToken(string tenantId, string resource)
+        public async Task<string> GetAppRegistrationCredentialLessToken(string tenantId, string resource)
         {
             tenantId = (tenantId ?? string.Empty).ToLower();
             resource = (resource ?? string.Empty).ToLower();
@@ -53,14 +54,21 @@ namespace AzureCredentialLess.Services
             }
             return resourcesTokens[tokenKey].AccessToken;
         }
+        public async Task<string> GetManagedIdentityToken(string resource)
+        {
+            var context = new TokenRequestContext(new[] { resource + ".default" });
+            AccessToken token = await IdentityCredential.GetTokenAsync(context); // the credential caches tokens, so if it has a non-expired one for the context, it won't request another one. 
+            return token.Token;
+        }
+
 
         private Task<string> GetAssertion(CancellationToken token) => GetAssertion();
 
-        private async Task<string> GetAssertion() => (await identityCredential.GetTokenAsync(identityToClientContext)).Token; // the credential caches tokens, so if it has a non-expired one for the context, it won't request another one. 
+        private Task<string> GetAssertion() => GetManagedIdentityToken(federatedCredentialAudience);
         public ClientAssertionCredential GetClientAssertionCredential(string tenantId) => new ClientAssertionCredential(tenantId, GetClientId(), GetAssertion);
 
         /// <summary>
-        /// Initializes <see cref="identityCredential"/><br/>
+        /// Initializes <see cref="IdentityCredential"/><br/>
         /// If the environment variable <i>identity_client_id</i> is set, it means it will pick up that user-assigned identity<br/>
         /// Otherwise, if existent, it will pick up the system-assigned identity, which has no client id<br/>
         /// 
@@ -73,12 +81,13 @@ namespace AzureCredentialLess.Services
             string managedIdentityClientId = Environment.GetEnvironmentVariable("identity_client_id");
             if (managedIdentityClientId is null)
             {
-                identityCredential = new ManagedIdentityCredential(); // If existent, this will pick up the system-assigned identity.
+                IdentityCredential = new ManagedIdentityCredential(); // If existent, this will pick up the system-assigned identity.
             }
             else
             {
-                identityCredential = new ManagedIdentityCredential(managedIdentityClientId); // This will pick up the specified user-assigned identity. 
+                IdentityCredential = new ManagedIdentityCredential(managedIdentityClientId); // This will pick up the specified user-assigned identity. 
             }
+
         }
 
         /// <summary>
@@ -99,7 +108,7 @@ namespace AzureCredentialLess.Services
                 body[kv.Key] = kv.Value;
             }
             body["scope"] = resource + ".default"; // user_impersonation doesn't work in this case
-            body["client_assertion"] = (await identityCredential.GetTokenAsync(identityToClientContext)).Token; // the credential caches tokens, so if it has a non-expired one for the context, it won't request another one. 
+            body["client_assertion"] = await GetManagedIdentityToken(federatedCredentialAudience); // the credential caches tokens, so if it has a non-expired one for the context, it won't request another one. 
             return body;
         }
         /// <summary>

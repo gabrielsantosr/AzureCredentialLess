@@ -1,20 +1,17 @@
 # AzureCredentialLess
 Explorative project to demonstrate the possibility to access resources in a different tenant without using passwords, nor secrets, nor certificates.
 
-In this project, from an Function App in my tenant, I am querying data on other tenants.
+### Scenarios
+**1)** I am querying data on other tenants. **App :arrow_right: Managed Identity :arrow_right: App registration :arrow_right: Service principal :arrow_right: Resource**
+**2)** I am querying data on my tenant **App :arrow_right: Managed Identity :arrow_right: Resource**
 
 Same can be done from a Logic App, a VM (any kind of resource to which a managed identity can be assigned to), to any other resource in another tenant.
 
-There are two concepts that are being put together here:
-1) **Multi-tenancy:** Using a multi-tenant app registration allows the creation of service principals in other tenants. The authentication method (secret, certificate and/or federated credentials), are managed from your tenant. Other tenants admins can determine which resources their local service principal has access to. You manage your credentials, they manage your access within their tenant.
-2) **Federated credentials:** You can add a federated credential to your app registration to trust a managed identity within your tenant. And you can use that managed identity as an identity of a Function App or a Web App. That way, your app does not need to hold credentials to authenticate with your App Registration.
+There are three concepts:
+1) **Managed Identity**: Connecting to local resources using a managed identity, no need for a service principal, no need for credentials. Managed identities are service principals residing in your tenant and not bound to an app registration. within you tenant you give them the access you need.
+2) **Multi-tenancy:** Using a multi-tenant app registration allows the creation of service principals in other tenants. The authentication method (secret, certificate and/or federated credentials), are managed from your tenant. Other tenants admins can determine which resources their local service principal has access to. You manage your credentials, they manage your access within their tenant.
+3) **Federated credentials:** You can add a federated credential to your app registration to trust a managed identity within your tenant. And you can use that managed identity as an identity of a Function App or a Web App. That way, your app does not need to hold credentials to authenticate with your App Registration.
 
-**App :arrow_right: Managed Identity :arrow_right: App registration :arrow_right: Service principal** 
-
-
-
-## Scenario.
-In the tenant of a company (let's call it "PROVIDER"), there is a Function App that needs to interact with resources of its customers.
 
 ## What is necessary in PROVIDER's tenant:
 - Function app
@@ -33,7 +30,7 @@ In the tenant of a company (let's call it "PROVIDER"), there is a Function App t
 
 | Resource | API permissions |
 | - | - |
-| BC | API.ReadWrite.All, Automation.ReadWrite.All
+| BC | API.ReadWrite.All, Automation.ReadWrite.All _If using a managed identity locally, the permissions should be assigned with azure cli or ARM template_
 | CRM | _None_
 | Storage Account | _None_ |
 | Key Vault | _None_ |
@@ -99,7 +96,7 @@ Method: POST
 Body sample:
 ```
 {
-    "TenantId":"00000000-0000-0000-0000-000000000000",
+    "TenantId":"00000000-0000-0000-0000-000000000000", // can be null
     "Account":"mystorageaccountname",
     "Container":"my-container-name",
     "BlobsPrefix": "myfolder/" // can be null
@@ -112,12 +109,12 @@ Method: POST
 Body sample:
 ```
 {
-    "TenantId":"00000000-0000-0000-0000-000000000000",
+    "TenantId":"00000000-0000-0000-0000-000000000000", // can be null
     "KeyVaultName":"my-kv-name",
     "KeyVaultSecret":"mySecretName"
 }
 ```
-
+Set `TenantId` to `null` to try [Scenario](#scenarios) 2. So far available only for the last two requests.
 
 ## References
 

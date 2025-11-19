@@ -37,7 +37,7 @@ namespace AzureCredentialLess.Services
 
         private IOrganizationService GetService(string tenantId, string environmentURL)
         {
-            return new ServiceClient(new Uri(environmentURL), url => azureAuthService.GetCredentialLessToken(tenantId, environmentURL));
+            return new ServiceClient(new Uri(environmentURL), url => azureAuthService.GetAppRegistrationCredentialLessToken(tenantId, environmentURL));
         }
     }
 }

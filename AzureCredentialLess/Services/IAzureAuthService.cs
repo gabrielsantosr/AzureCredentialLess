@@ -4,7 +4,9 @@ namespace AzureCredentialLess.Services
 {
     public interface IAzureAuthService
     {
-        Task<string> GetCredentialLessToken(string tanantId, string resource);
+        Task<string> GetAppRegistrationCredentialLessToken(string tanantId, string resource);
         ClientAssertionCredential GetClientAssertionCredential(string tenantId);
+        Task<string> GetManagedIdentityToken(string resource);
+        ManagedIdentityCredential IdentityCredential { get; }
     }
 }
