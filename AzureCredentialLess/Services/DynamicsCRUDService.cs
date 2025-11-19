@@ -24,7 +24,7 @@ namespace AzureCredentialLess.Services
             using var client = new HttpClient();
             HttpRequestHeaders headers = client.DefaultRequestHeaders;
             headers.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-            headers.Authorization = new AuthenticationHeaderValue("Bearer", await azureAuthService.GetCredentialLessToken(tenantId, resource));
+            headers.Authorization = new AuthenticationHeaderValue("Bearer", await azureAuthService.GetAppRegistrationCredentialLessToken(tenantId, resource));
             headers.Add("OData-MaxVersion", "4.0");
             headers.Add("OData-Version", "4.0");
             headers.Add("Prefer", "odata.include-annotations=*");

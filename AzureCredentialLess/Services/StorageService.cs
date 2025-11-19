@@ -10,7 +10,7 @@ namespace AzureCredentialLess.Services
         public async Task<List<BlobDetail>> GetBlobsDetails(BlobCollectionRequest request)
         {
             string blobURL = $"https://{request.Account}.blob.core.windows.net/{request.Container}";
-            var credential = azureAuthService.GetClientAssertionCredential(request.TenantId);
+            var credential = GetCredential(request);
             BlobContainerClient client = new BlobContainerClient(new Uri(blobURL), credential);
             var asyncBlobCollection = client.GetBlobsAsync(prefix: request.BlobsPrefix);
             List<BlobDetail> output = new();

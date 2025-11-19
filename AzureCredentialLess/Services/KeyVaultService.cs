@@ -1,4 +1,6 @@
-﻿using Azure.Security.KeyVault.Secrets;
+﻿using Azure.Core;
+using Azure.Identity;
+using Azure.Security.KeyVault.Secrets;
 using AzureCredentialLess.Classes;
 
 namespace AzureCredentialLess.Services
@@ -19,11 +21,10 @@ namespace AzureCredentialLess.Services
             }
             return response.Value;
         }
-
         private SecretClient GetSecretClient(KeyVaultRequest request)
         {
             var vaultURI = string.Format("https://{0}.vault.azure.net/", request.KeyVaultName);
-            var credential = azureAuthService.GetClientAssertionCredential(request.TenantId);
+            TokenCredential credential = GetCredential(request);
             return new SecretClient(new Uri(vaultURI), credential);
         }
 
