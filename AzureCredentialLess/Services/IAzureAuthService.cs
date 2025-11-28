@@ -1,12 +1,10 @@
-﻿using Azure.Identity;
+﻿using Azure.Core;
 
 namespace AzureCredentialLess.Services
 {
     public interface IAzureAuthService
     {
-        Task<string> GetAppRegistrationCredentialLessToken(string tanantId, string resource);
-        ClientAssertionCredential GetClientAssertionCredential(string tenantId);
-        Task<string> GetManagedIdentityToken(string resource);
-        ManagedIdentityCredential IdentityCredential { get; }
+        Task<string> GetToken(string tenantId, string resource);
+        TokenCredential GetCredential(string tenantId);
     }
 }
