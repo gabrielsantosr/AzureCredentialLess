@@ -36,12 +36,18 @@ namespace AzureCredentialLess.Services
             InitBasicTokenRequestParams();
         }
 
-        public async Task<string> GetAppRegistrationCredentialLessToken(string tenantId, string resource)
+        public Task<string> GetToken(string tenantId, string resource) => tenantId is null ? GetManagedIdentityToken(resource) : GetServicePrincipalToken(tenantId, resource);
+
+        private async Task<string> GetManagedIdentityToken(string resource)
         {
-            tenantId = (tenantId ?? string.Empty).ToLower();
+            var context = new TokenRequestContext(new[] { resource + ".default" });
+            AccessToken token = await IdentityCredential.GetTokenAsync(context); // the credential caches tokens, so if it has a non-expired one for the context, it won't request another one. 
+            return token.Token;
+        }
+        private async Task<string> GetServicePrincipalToken(string tenantId, string resource)
+        {
             resource = (resource ?? string.Empty).ToLower();
             string tokenKey = string.Format("{0}|{1}", tenantId, resource);
-
             if (!resourcesTokens.ContainsKey(tokenKey) || resourcesTokens[tokenKey].IsExpired)
             {
                 using (HttpClient client = new HttpClient())
@@ -54,18 +60,20 @@ namespace AzureCredentialLess.Services
             }
             return resourcesTokens[tokenKey].AccessToken;
         }
-        public async Task<string> GetManagedIdentityToken(string resource)
-        {
-            var context = new TokenRequestContext(new[] { resource + ".default" });
-            AccessToken token = await IdentityCredential.GetTokenAsync(context); // the credential caches tokens, so if it has a non-expired one for the context, it won't request another one. 
-            return token.Token;
-        }
 
 
         private Task<string> GetAssertion(CancellationToken token) => GetAssertion();
 
         private Task<string> GetAssertion() => GetManagedIdentityToken(federatedCredentialAudience);
-        public ClientAssertionCredential GetClientAssertionCredential(string tenantId) => new ClientAssertionCredential(tenantId, GetClientId(), GetAssertion);
+        
+        // If tenant is null, it return access the vault with the managed identity, otherwise, with the service principal on behalf of the managed identity
+        /// <summary>
+        /// If <see cref="AzureRequest.TenantId"/> is null, it returns <see cref="ManagedIdentityCredential"/> to connect managed identity &#x2192; resource<br/>
+        /// Otherwise, it returns a <see cref="ClientAssertionCredential"/> to connect managed identity &#x2192; app registration &#x2192; service principal &#x2192; resource
+        /// </summary>
+        /// <param name="request"></param>
+        /// <returns></returns>
+        public TokenCredential GetCredential(string tenantId) => tenantId is null? IdentityCredential : new ClientAssertionCredential(tenantId, ClientId, GetAssertion);
 
         /// <summary>
         /// Initializes <see cref="IdentityCredential"/><br/>
@@ -108,7 +116,7 @@ namespace AzureCredentialLess.Services
                 body[kv.Key] = kv.Value;
             }
             body["scope"] = resource + ".default"; // user_impersonation doesn't work in this case
-            body["client_assertion"] = await GetManagedIdentityToken(federatedCredentialAudience); // the credential caches tokens, so if it has a non-expired one for the context, it won't request another one. 
+            body["client_assertion"] = await GetAssertion();
             return body;
         }
         /// <summary>
@@ -119,12 +127,13 @@ namespace AzureCredentialLess.Services
         {
             basicTokenRequestParams = new()
             {
-                [clientIdParamName] = GetClientId(),
+                [clientIdParamName] = ClientId,
                 ["client_assertion_type"] = "urn:ietf:params:oauth:client-assertion-type:jwt-bearer",
                 ["grant_type"] = "client_credentials"
             };
         }
 
-        private static string GetClientId() => Environment.GetEnvironmentVariable(clientIdParamName);
+        private static string ClientId { get { if (_clientId is null) { _clientId = Environment.GetEnvironmentVariable(clientIdParamName); } return _clientId; } }
+        private static string _clientId;
     }
 }

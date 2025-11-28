@@ -13,7 +13,7 @@ namespace AzureCredentialLess.Services
 
         public async Task<KeyVaultSecret> GetSecret(KeyVaultSecretRequest request)
         {
-            var client = GetSecretClient(request);
+            var client = GetClient(request);
             var response = await client.GetSecretAsync(request.SecretName);
             if (!response.HasValue)
             {
@@ -21,10 +21,10 @@ namespace AzureCredentialLess.Services
             }
             return response.Value;
         }
-        private SecretClient GetSecretClient(KeyVaultRequest request)
+        private SecretClient GetClient(KeyVaultRequest request)
         {
             var vaultURI = string.Format("https://{0}.vault.azure.net/", request.KeyVaultName);
-            TokenCredential credential = GetCredential(request);
+            TokenCredential credential = azureAuthService.GetCredential(request.TenantId);
             return new SecretClient(new Uri(vaultURI), credential);
         }
 

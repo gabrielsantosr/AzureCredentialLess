@@ -97,7 +97,7 @@ Method: POST
 Body sample:
 ```
 {
-    "TenantId":"00000000-0000-0000-0000-000000000000", // can be null
+    "TenantId":"00000000-0000-0000-0000-000000000000",
     "Account":"mystorageaccountname",
     "Container":"my-container-name",
     "BlobsPrefix": "myfolder/" // can be null
@@ -110,12 +110,12 @@ Method: POST
 Body sample:
 ```
 {
-    "TenantId":"00000000-0000-0000-0000-000000000000", // can be null
+    "TenantId":"00000000-0000-0000-0000-000000000000",
     "KeyVaultName":"my-kv-name",
     "KeyVaultSecret":"mySecretName"
 }
 ```
-Set `TenantId` to `null` to try [Scenario](#scenarios) 2. So far available only for the last two requests.
+:boom: **_In all requests, set `TenantId` to `null` to try [Scenario](#scenarios) 2._** :boom:
 
 ## References
 
@@ -125,10 +125,8 @@ https://devblogs.microsoft.com/identity/access-cloud-resources-across-tenants-wi
 
 https://learn.microsoft.com/en-us/azure/devops/integrate/get-started/authentication/service-principal-managed-identity?view=azure-devops
 
+https://dreamingincrm.com/2021/11/16/connecting-to-dataverse-from-function-app-using-managed-identity/
+
 ## To Do
 The is still the question regarding unit tests, since the managed identity won't be accessible from local execution.
 Probably replacing ManagedIdentity with DefaultAzureCredentials. See: https://learn.microsoft.com/en-us/dotnet/api/azure.identity.defaultazurecredential?view=azure-dotnet, which will still pick up the managed identity online.
-
-I also found this article, which is not exactly the same scenario, but could help: 
-https://dreamingincrm.com/2021/11/16/connecting-to-dataverse-from-function-app-using-managed-identity/
-Something interesting about this last mentioned linked, is that it is using the managed identity as the service user of the CRM, instead of a service principal. 
