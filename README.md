@@ -1,3 +1,7 @@
+# Introduction
+ See [AzureCredentialLess](#azurecredentialless) For Azure :arrow_right: Resources
+
+ See [DataversePlugins](#dataverseplugins) For CRM Plugins :arrow_right: Azure 
 # AzureCredentialLess
 Explorative project to demonstrate the possibility to access resources in a different tenant without using passwords, nor secrets, nor certificates.
 
@@ -133,14 +137,18 @@ Probably replacing ManagedIdentity with DefaultAzureCredentials. See: https://le
 
 
 # DataversePlugins
+
 Includes three projects.
 This is Dataverse authenticating with a Managed Identity in any Tenant.
 Each project configuration has the PostBuild event for the signature.
+
 **DataversePlugins.StandAlone** is meant to be registered as a plugin.
+
 **DataversePlugins.Tools** is meant to be added as a reference on **Package**
+
 **DataversePlugins.Package** is meant to be registered as a package.
 
-Do have a look at theese two blogs:
+Do have a look at theese two blogs, by Clive Oldridge.
 - [Set up managed identity for Power Platform Plugins](https://www.clive-oldridge.com/azure/2024/10/14/set-up-managed-identity-for-power-platform-plugins.html)
 - [Power Platform Plugin Package – Managed identity](https://www.clive-oldridge.com/azure/2024/11/22/power-platform-plugin-package-managed-identity.html)
 
