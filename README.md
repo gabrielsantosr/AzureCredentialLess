@@ -136,8 +136,11 @@ Probably replacing ManagedIdentity with DefaultAzureCredentials. See: https://le
 Includes three projects.
 This is Dataverse authenticating with a Managed Identity in any Tenant.
 Each project configuration has the PostBuild event for the signature.
+
 **DataversePlugins.StandAlone** is meant to be registered as a plugin.
+
 **DataversePlugins.Tools** is meant to be added as a reference on **Package**
+
 **DataversePlugins.Package** is meant to be registered as a package.
 
 Do have a look at theese two blogs:
