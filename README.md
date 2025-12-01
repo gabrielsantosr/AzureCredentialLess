@@ -130,3 +130,17 @@ https://dreamingincrm.com/2021/11/16/connecting-to-dataverse-from-function-app-u
 ## To Do
 The is still the question regarding unit tests, since the managed identity won't be accessible from local execution.
 Probably replacing ManagedIdentity with DefaultAzureCredentials. See: https://learn.microsoft.com/en-us/dotnet/api/azure.identity.defaultazurecredential?view=azure-dotnet, which will still pick up the managed identity online.
+
+
+# DataversePlugins
+Includes three projects.
+This is Dataverse authenticating with a Managed Identity in any Tenant.
+Each project configuration has the PostBuild event for the signature.
+**DataversePlugins.StandAlone** is meant to be registered as a plugin.
+**DataversePlugins.Tools** is meant to be added as a reference on **Package**
+**DataversePlugins.Package** is meant to be registered as a package.
+
+Do have a look at theese two blogs:
+- [Set up managed identity for Power Platform Plugins](https://www.clive-oldridge.com/azure/2024/10/14/set-up-managed-identity-for-power-platform-plugins.html)
+- [Power Platform Plugin Package – Managed identity](https://www.clive-oldridge.com/azure/2024/11/22/power-platform-plugin-package-managed-identity.html)
+
