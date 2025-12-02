@@ -13,7 +13,7 @@ Explorative project to demonstrate the possibility to access resources in a diff
 Same can be done from a Logic App, a VM (any kind of resource to which a managed identity can be assigned to), to any other resource in another tenant.
 
 There are three concepts:
-1) **Managed Identity**: Connecting to local resources using a managed identity, no need for a service principal, no need for credentials. Managed identities are service principals residing in your tenant and not bound to an app registration. within you tenant you give them the access you need.
+1) **Managed Identity**: Connecting to local resources using a managed identity, no need for a service principal, no need for credentials. Managed identities are service principals residing in your tenant and not bound to an app registration. Within your tenant, you grant them the access you need (You could still connect to them externally, using federated credentials).
 2) **Multi-tenancy:** Using a multi-tenant app registration allows the creation of service principals in other tenants. The authentication method (secret, certificate and/or federated credentials), are managed from your tenant. Other tenants admins can determine which resources their local service principal has access to. You manage your credentials, they manage your access within their tenant.
 3) **Federated credentials:** You can add a federated credential to your app registration to trust a managed identity within your tenant. And you can use that managed identity as an identity of a Function App or a Web App. That way, your app does not need to hold credentials to authenticate with your App Registration.
 
@@ -132,7 +132,7 @@ https://learn.microsoft.com/en-us/azure/devops/integrate/get-started/authenticat
 https://dreamingincrm.com/2021/11/16/connecting-to-dataverse-from-function-app-using-managed-identity/
 
 ## To Do
-The is still the question regarding unit tests, since the managed identity won't be accessible from local execution.
+There is still the question regarding unit tests, since the managed identity won't be accessible from local execution.
 Probably replacing ManagedIdentity with DefaultAzureCredentials. See: https://learn.microsoft.com/en-us/dotnet/api/azure.identity.defaultazurecredential?view=azure-dotnet, which will still pick up the managed identity online.
 
 
@@ -142,11 +142,11 @@ Includes three projects.
 This is Dataverse authenticating with a Managed Identity in any Tenant.
 Each project configuration has the PostBuild event for the signature.
 
-**DataversePlugins.StandAlone** is meant to be registered as a plugin.
+**DataversePlugins.StandAlone** is meant to be registered as a plugin assembly.
 
 **DataversePlugins.Tools** is meant to be added as a reference on **Package**
 
-**DataversePlugins.Package** is meant to be registered as a package.
+**DataversePlugins.Package** is meant to be registered as a plugin package.
 
 Do have a look at theese two blogs, by Clive Oldridge.
 - [Set up managed identity for Power Platform Plugins](https://www.clive-oldridge.com/azure/2024/10/14/set-up-managed-identity-for-power-platform-plugins.html)
