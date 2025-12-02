@@ -35,7 +35,7 @@ There are three concepts:
 
 | Resource | API permissions |
 | - | - |
-| BC | API.ReadWrite.All, Automation.ReadWrite.All _If using a managed identity locally, the permissions should be assigned with azure cli or ARM template_
+| BC | API.ReadWrite.All, Automation.ReadWrite.All _If using a managed identity locally, the permissions should be assigned with azure cli or ARM template [BcApiPermissionsAssignment.bicep](/ArmTemplate/BcApiPermissionsAssignment.bicep)_
 | CRM | _None_
 | Storage Account | _None_ |
 | Key Vault | _None_ |
